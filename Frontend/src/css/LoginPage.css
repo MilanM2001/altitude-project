@@ -1,0 +1,44 @@
+.login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 200px;
+}
+
+.login-box {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-title {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.login-button {
+    padding: 12px;
+    background-color: #007bff;
+    color: #ffffff;
+    text-transform: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #005bb5;
+}
+
+.MuiFormHelperText-root {
+    font-size: 12px;
+    color: red;
+    margin-top: 4px;
+}

@@ -3,20 +3,8 @@
   "WorkspaceRootPath": "D:\\Projects\\altitude-web-project\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\services\\userservice\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:services\\userservice\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\services\\userservice\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:services\\userservice\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\repositories\\userrepository\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:repositories\\userrepository\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\models\\dtos\\authdto\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:models\\dtos\\authdto\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,53 +19,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "UserController.cs",
-              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Controllers\\UserController.cs",
-              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
-              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Controllers\\UserController.cs",
-              "RelativeToolTip": "Controllers\\UserController.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAiwAAAAAAAAAAAAAAAAA==",
+              "Title": "RegisterDto.cs",
+              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Models\\DTOs\\AuthDto\\RegisterDto.cs",
+              "RelativeDocumentMoniker": "Models\\DTOs\\AuthDto\\RegisterDto.cs",
+              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Models\\DTOs\\AuthDto\\RegisterDto.cs",
+              "RelativeToolTip": "Models\\DTOs\\AuthDto\\RegisterDto.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwB0AAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-04T11:57:23.021Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UserService.cs",
-              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Services\\UserService\\UserService.cs",
-              "RelativeDocumentMoniker": "Services\\UserService\\UserService.cs",
-              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Services\\UserService\\UserService.cs",
-              "RelativeToolTip": "Services\\UserService\\UserService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-04T11:56:18.034Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "IUserService.cs",
-              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Services\\UserService\\IUserService.cs",
-              "RelativeDocumentMoniker": "Services\\UserService\\IUserService.cs",
-              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Services\\UserService\\IUserService.cs",
-              "RelativeToolTip": "Services\\UserService\\IUserService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-04T11:56:11.074Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "UserRepository.cs",
-              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Repositories\\UserRepository\\UserRepository.cs",
-              "RelativeDocumentMoniker": "Repositories\\UserRepository\\UserRepository.cs",
-              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Repositories\\UserRepository\\UserRepository.cs",
-              "RelativeToolTip": "Repositories\\UserRepository\\UserRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-04T11:55:25.33Z",
+              "WhenOpened": "2024-11-04T16:47:18.711Z",
               "EditorCaption": ""
             }
           ]

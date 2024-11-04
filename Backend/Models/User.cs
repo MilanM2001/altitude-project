@@ -28,7 +28,7 @@ namespace Backend.Models
         public string Surname { get; set; }
 
         [Required]
-        public DateTime DateOfBirth { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         [Required]
         [Column(TypeName = "varchar(20)")]
