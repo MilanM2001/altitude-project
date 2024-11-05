@@ -6,6 +6,6 @@ namespace Backend.Repositories.UserRepository
     {
         Task<User> GetByEmailAsync(string email);
         Task AddUserAsync(User user);
-        Task SaveChangesAsync();
+        Task UpdateUser(User updatedUser);
     }
 }

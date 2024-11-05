@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { AppRoute } from "./RoutesEnum";
+import { useAuth } from "../services/AuthContext";
 
 const NoAuthRoutesOutlet: React.FC = () => {
     const { isAuthenticated, loading } = useAuth();

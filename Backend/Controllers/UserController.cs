@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using Backend.Models.DTOs.AuthDto;
+using Backend.Models.DTOs.UserDto;
+using Backend.Services.AuthService;
+using Backend.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Authentication;
 
 namespace Backend.Controllers
 {
@@ -8,36 +12,47 @@ namespace Backend.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // GET: api/<UserController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+
+        private readonly IUserService _userService;
+
+        public UserController(IUserService userService)
         {
-            return new string[] { "value1", "value2" };
+            _userService = userService;
         }
 
-        // GET api/<UserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpPut("updateMyInfo")]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> UpdateMyInfo(UpdateMyInfoDto updateMyInfoDto)
         {
-            return "value";
+            try
+            {
+                await _userService.UpdateMyInfo(updateMyInfoDto);
+
+                return Ok("Info Updated");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // POST api/<UserController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPut("changePassword")]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
         {
-        }
-
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            try
+            {
+                await _userService.ChangePassword(changePasswordDto);
+                return Ok("Password Changed Successfully");
+            }
+            catch (InvalidCredentialException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

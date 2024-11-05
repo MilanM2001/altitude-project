@@ -3,8 +3,16 @@
   "WorkspaceRootPath": "D:\\Projects\\altitude-web-project\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\models\\dtos\\authdto\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:models\\dtos\\authdto\\registerdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|d:\\projects\\altitude-web-project\\backend\\models\\dtos\\userdto\\changepassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{47CDB942-A06F-4C16-AA16-E495573E63B8}|Backend.csproj|solutionrelative:models\\dtos\\userdto\\changepassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,19 +22,45 @@
       "DocumentGroups": [
         {
           "DockedWidth": 247,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "RegisterDto.cs",
-              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Models\\DTOs\\AuthDto\\RegisterDto.cs",
-              "RelativeDocumentMoniker": "Models\\DTOs\\AuthDto\\RegisterDto.cs",
-              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Models\\DTOs\\AuthDto\\RegisterDto.cs",
-              "RelativeToolTip": "Models\\DTOs\\AuthDto\\RegisterDto.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAQwB0AAAAxAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwBEAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-04T16:47:18.711Z",
+              "WhenOpened": "2024-11-05T15:26:13.305Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ChangePasswordDto.cs",
+              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Models\\DTOs\\UserDto\\ChangePasswordDto.cs",
+              "RelativeDocumentMoniker": "Models\\DTOs\\UserDto\\ChangePasswordDto.cs",
+              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Models\\DTOs\\UserDto\\ChangePasswordDto.cs",
+              "RelativeToolTip": "Models\\DTOs\\UserDto\\ChangePasswordDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T15:25:33.315Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "D:\\Projects\\altitude-web-project\\Backend\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
+              "ToolTip": "D:\\Projects\\altitude-web-project\\Backend\\Controllers\\UserController.cs",
+              "RelativeToolTip": "Controllers\\UserController.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADAAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-05T13:41:09.796Z",
               "EditorCaption": ""
             }
           ]

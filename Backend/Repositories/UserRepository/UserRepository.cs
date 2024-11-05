@@ -24,8 +24,9 @@ namespace Backend.Repositories.UserRepository
             await _context.SaveChangesAsync();
         }
 
-        public async Task SaveChangesAsync()
+        public async Task UpdateUser(User updatedUser)
         {
+            _context.Users.Update(updatedUser);
             await _context.SaveChangesAsync();
         }
     }

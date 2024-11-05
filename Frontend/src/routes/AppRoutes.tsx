@@ -1,5 +1,15 @@
 import { Route, Routes } from "react-router-dom";
 import { AppRoute } from "./RoutesEnum";
+import NoAuthRoutesOutlet from "./NoAuthRoutesOutlet";
+import AuthRoutesOutlet from "./AuthRoutesOutlet";
+import AdminRoutesOutlet from "./AdminRoutesOutlet";
+import NotFoundPage from "../pages/NotFoundPage";
+import RegisterPage from "../pages/RegisterPage";
+import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import MyAccountPage from "../pages/MyAccountPage";
+import UpdateInfoPage from "../pages/UpdateInfoPage";
+import ChangePasswordPage from "../pages/ChangePasswordPage";
 
 const AppRoutes = () => {
     return (
@@ -17,13 +27,14 @@ const AppRoutes = () => {
             /* Routes all authenticated users can access */
             <Route element={<AuthRoutesOutlet />}>
                 <Route path={AppRoute.MY_ACCOUNT} element={<MyAccountPage />} />
-                <Route path={AppRoute.CART} element={<CartPage />} />
+                <Route path={AppRoute.UPDATE_INFO} element={<UpdateInfoPage />} />
+                <Route path={AppRoute.CHANGE_PASSWORD} element={<ChangePasswordPage />} />
             </Route>
 
             /* Routes only users with role "admin" can access */
             <Route element={<AdminRoutesOutlet />}>
-                <Route path={AppRoute.CREATE_PRODUCT} element={<ProductCreatePage />} />
-                <Route path={AppRoute.UPDATE_PRODUCT} element={<ProductUpdatePage />} />
+                {/* <Route path={AppRoute.CREATE_PRODUCT} element={<ProductCreatePage />} />
+                <Route path={AppRoute.UPDATE_PRODUCT} element={<ProductUpdatePage />} /> */}
             </Route>
 
             <Route path={AppRoute.NOT_FOUND} element={<NotFoundPage />} />

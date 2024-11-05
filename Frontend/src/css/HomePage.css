@@ -1,0 +1,56 @@
+.main {
+    margin-top: 80px;
+}
+
+.title {
+    font-size: 15px;
+}
+
+.product-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    max-width: 320px;
+    max-height: 400px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.product-card img {
+    object-fit: fill;
+}
+
+.product-card .MuiTypography-h6 {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    text-align: center;
+}
+
+.product-card .MuiTypography-body2 {
+    margin-bottom: 8px;
+    color: #555;
+    text-align: center;
+}
+
+.product-card .MuiTypography-h6:last-of-type {
+    font-weight: bold;
+    color: #0072ff;
+    text-align: center;
+}
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination button {
+    margin: 0 5px;
+}

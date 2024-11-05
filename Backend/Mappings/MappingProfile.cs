@@ -12,6 +12,7 @@ namespace Backend.Mappings
             //CreateMap<User, RegisterDto>();
             CreateMap<User, UserResponseDto>();
             CreateMap<RegisterDto, User>();
+            CreateMap<UpdateMyInfoDto, User>();
         }
     }
 }

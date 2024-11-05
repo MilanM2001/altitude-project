@@ -6,10 +6,29 @@ import { useRegister } from '../hooks/AuthHooks';
 import '../css/RegisterPage.css';
 
 const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email format').required('Email is required').min(5, 'Email should be at least 5 characters').max(50, 'Email should be less than 50 characters'),
-    password: Yup.string().required('Password is required').min(8, 'Password should be at least 8 characters').max(20, 'Password should be less than 20 characters'),
-    name: Yup.string().required('Name is required'),
-    surname: Yup.string().required('Surname is required'),
+    email: Yup.string()
+        .email('Invalid email format')
+        .required('Email is required')
+        .min(5, 'Email should be at least 5 characters')
+        .max(50, 'Email should be less than 50 characters'),
+    password: Yup.string()
+        .required('New password is required')
+        .min(8, 'Password should be at least 8 characters')
+        .max(30, 'Password should be less than 30 characters')
+        .matches(/[A-Z]/, 'Password should contain at least one uppercase letter')
+        .matches(/[a-z]/, 'Password should contain at least one lowercase letter')
+        .matches(/[0-9]/, 'Password should contain at least one number'),
+    name: Yup.string()
+        .required('Name is required')
+        .min(3, 'Name should be at least 3 characters')
+        .max(30, 'Name should be less than 30 characters'),
+    surname: Yup.string()
+        .required('Surname is required')
+        .min(3, 'Surname should be at least 3 characters')
+        .max(30, 'Surname should be less than 30 characters'),
+    dateOfBirth: Yup.date()
+        .required('Date of birth is required')
+        .max(new Date(), 'Date of Birth cannot be in the future'),
 });
 
 const RegisterPage = () => {
@@ -21,7 +40,7 @@ const RegisterPage = () => {
             password: values.password,
             name: values.name,
             surname: values.surname,
-            dateOfBirth: values.dateOfBirth
+            dateOfBirth: values.dateOfBirth,
         };
 
         await registerHandler(registerData);
@@ -36,10 +55,8 @@ const RegisterPage = () => {
                         email: '',
                         password: '',
                         name: '',
-                        street: '',
-                        city: '',
-                        zipCode: '',
-                        country: '',
+                        surname: '',
+                        dateOfBirth: '',
                     }}
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
@@ -72,36 +89,22 @@ const RegisterPage = () => {
                                 error={touched.name && errors.name ? errors.name : ''}
                             />
                             <InputField
-                                name="street"
-                                label="Street"
-                                value={values.street}
+                                name="surname"
+                                label="Surname"
+                                value={values.surname}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                error={touched.street && errors.street ? errors.street : ''}
+                                error={touched.surname && errors.surname ? errors.surname : ''}
                             />
                             <InputField
-                                name="city"
-                                label="City"
-                                value={values.city}
+                                name="dateOfBirth"
+                                label="Date of Birth"
+                                type="date"
+                                value={values.dateOfBirth}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                error={touched.city && errors.city ? errors.city : ''}
-                            />
-                            <InputField
-                                name="zipCode"
-                                label="Zip Code"
-                                value={values.zipCode}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.zipCode && errors.zipCode ? errors.zipCode : ''}
-                            />
-                            <InputField
-                                name="country"
-                                label="Country"
-                                value={values.country}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.country && errors.country ? errors.country : ''}
+                                error={touched.dateOfBirth && errors.dateOfBirth ? errors.dateOfBirth : ''}
+                            // InputLabelProps={{ shrink: true }}
                             />
                             {errorMessage && <Typography color="error">{errorMessage}</Typography>}
                             <Button
@@ -115,8 +118,6 @@ const RegisterPage = () => {
                                 {loading ? <CircularProgress size={24} color="inherit" /> : 'Register'}
                             </Button>
                         </Form>
-
-
                     )}
                 </Formik>
             </Box>
