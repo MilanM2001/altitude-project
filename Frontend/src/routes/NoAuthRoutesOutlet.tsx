@@ -10,7 +10,7 @@ const NoAuthRoutesOutlet: React.FC = () => {
     }
 
     if (isAuthenticated) {
-        return <Navigate to={AppRoute.HOME} replace />
+        return <Navigate to={AppRoute.MY_ACCOUNT} replace />
     }
 
     return <Outlet />;

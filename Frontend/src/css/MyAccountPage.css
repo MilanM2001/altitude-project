@@ -14,10 +14,6 @@
     margin-right: auto;
 }
 
-.account-address-box {
-    float: right;
-}
-
 .button-container {
     display: flex;
     justify-content: center;
@@ -39,4 +35,19 @@
 
 .action-button:active {
     transform: scale(1);
+}
+
+.account-image-box {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.account-image {
+    width: 200px;
+    height: 160px;
+    border-radius: 10%;
+    object-fit: fill;
+    margin-bottom: 20px;
+    margin-right: 45px;
 }

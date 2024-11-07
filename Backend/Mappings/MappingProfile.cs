@@ -8,8 +8,6 @@ namespace Backend.Mappings
     public class MappingProfile : Profile
     {
         public MappingProfile() {
-
-            //CreateMap<User, RegisterDto>();
             CreateMap<User, UserResponseDto>();
             CreateMap<RegisterDto, User>();
             CreateMap<UpdateMyInfoDto, User>();

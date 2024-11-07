@@ -2,7 +2,7 @@ import React from 'react';
 import { TextField } from '@mui/material';
 
 interface InputFieldProps {
-    name: string
+    name: string;
     label: string;
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -11,19 +11,20 @@ interface InputFieldProps {
     type?: string;
 }
 
-const InputField = (props: InputFieldProps) => {
+const InputField = ({ name, label, value, onChange, onBlur, error, type }: InputFieldProps) => {
     return (
         <TextField
-            name={props.name}
-            label={props.label}
-            value={props.value}
-            onChange={props.onChange}
-            onBlur={props.onBlur}
+            name={name}
+            label={label}
+            value={value}
+            onChange={onChange}
+            onBlur={onBlur}
             fullWidth
             margin="normal"
-            type={props.type}
-            error={!!props.error}
-            helperText={props.error}
+            type={type}
+            error={!!error}
+            helperText={error}
+            InputLabelProps={type === 'date' ? { shrink: true } : undefined}
         />
     );
 };

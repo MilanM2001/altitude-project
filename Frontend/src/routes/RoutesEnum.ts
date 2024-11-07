@@ -5,5 +5,6 @@ export enum AppRoute {
     MY_ACCOUNT = '/my-account',
     UPDATE_INFO = '/update-info',
     CHANGE_PASSWORD = '/change-password',
+    USER_DETAILS = '/user/:email',
     NOT_FOUND = "*"
 }

@@ -3,6 +3,16 @@ export type LoginRequestDto = {
     password: string
 }
 
+export type GoogleLoginRequest = {
+    token: string
+}
+
+export type GoogleRegisterRequest = {
+    token: string
+    password: string
+    dateOfBirth: Date
+}
+
 export type RegisterRequestDto = {
     email: string
     password: string

@@ -28,7 +28,9 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <div className="navbar-brand">
-                <Link to="/">Altitude Project</Link>
+                {role === 'Admin' && (
+                    <Link to="/">Altitude Project</Link>
+                )}
             </div>
             <div className="navbar-links">
                 {!isAuthenticated ? (
@@ -38,9 +40,6 @@ const Navbar = () => {
                     </>
                 ) : (
                     <>
-                        {role === 'Admin' && (
-                            <Link to={AppRoute.HOME}>Admin Only test</Link>
-                        )}
                         <IconButton onClick={handleUserMenuOpen} className="avatar-button">
                             <Avatar alt="User Icon" sx={{ width: 30, height: 30 }} />
                         </IconButton>

@@ -1,5 +1,6 @@
 ﻿using Backend.Data;
 using Backend.Models;
+using Backend.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repositories.UserRepository
@@ -13,7 +14,31 @@ namespace Backend.Repositories.UserRepository
             _context = context;
         }
 
-        public async Task<User> GetByEmailAsync(string email)
+        public async Task<(List<User>, int)> GetAllPageable(int pageNumber, int pageSize, string? email = null, DateOnly? dateOfBirth = null)
+        {
+            var query = _context.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                query = query.Where(u => u.Email.Contains(email));
+            }
+
+            if (dateOfBirth.HasValue)
+            {
+                query = query.Where(u => u.DateOfBirth == dateOfBirth);
+            }
+
+            var totalRecords = await query.CountAsync();
+            var users = await query
+                             .Where(u => u.Role == Role.User)
+                             .Skip((pageNumber - 1) * pageSize)
+                             .Take(pageSize)
+                             .ToListAsync();
+
+            return (users, totalRecords);
+        }
+
+        public async Task<User> GetByEmail(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }

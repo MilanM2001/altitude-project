@@ -10,7 +10,7 @@ const AdminRoutesOutlet: React.FC = () => {
     }
 
     if (role !== 'Admin') {
-        return <Navigate to={AppRoute.HOME} replace />;
+        return <Navigate to={AppRoute.MY_ACCOUNT} replace />;
     }
 
     return <Outlet />;

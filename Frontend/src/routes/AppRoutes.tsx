@@ -10,13 +10,11 @@ import LoginPage from "../pages/LoginPage";
 import MyAccountPage from "../pages/MyAccountPage";
 import UpdateInfoPage from "../pages/UpdateInfoPage";
 import ChangePasswordPage from "../pages/ChangePasswordPage";
+import UserDetailsPage from "../pages/UserDetailsPage";
 
 const AppRoutes = () => {
     return (
         <Routes>
-
-            /* Routes both authenticated and non authenticated users can access */
-            <Route path={AppRoute.HOME} element={<HomePage />} />
 
             /* Routes which authenticated users cannot access */
             <Route element={<NoAuthRoutesOutlet />}>
@@ -31,10 +29,10 @@ const AppRoutes = () => {
                 <Route path={AppRoute.CHANGE_PASSWORD} element={<ChangePasswordPage />} />
             </Route>
 
-            /* Routes only users with role "admin" can access */
+            /* Routes only users with role "Admin" can access */
             <Route element={<AdminRoutesOutlet />}>
-                {/* <Route path={AppRoute.CREATE_PRODUCT} element={<ProductCreatePage />} />
-                <Route path={AppRoute.UPDATE_PRODUCT} element={<ProductUpdatePage />} /> */}
+                <Route path={AppRoute.HOME} element={<HomePage />} />
+                <Route path={AppRoute.USER_DETAILS} element={<UserDetailsPage />} />
             </Route>
 
             <Route path={AppRoute.NOT_FOUND} element={<NotFoundPage />} />

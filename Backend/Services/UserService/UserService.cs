@@ -22,16 +22,34 @@ namespace Backend.Services.UserService
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<UserResponseDto> GetByEmailAsync(string email)
+        public async Task<(List<UserResponseDto>, int)> GetAllPageable(int pageNumber, int pageSize, string? email = null, DateOnly? dateOfBirth = null)
         {
-            User user = await _userRepository.GetByEmailAsync(email);
+            var (users, totalRecords) = await _userRepository.GetAllPageable(pageNumber, pageSize, email, dateOfBirth);
+
+            var usersDto = _mapper.Map<List<UserResponseDto>>(users);
+            for (int i = 0; i < usersDto.Count; i++)
+            {
+                if (users[i].Image != null)
+                {
+                    usersDto[i].Image = Convert.ToBase64String(users[i].Image);
+                }
+            }
+
+            return (usersDto, totalRecords);
+        }
+
+        public async Task<UserResponseDto> GetByEmail(string email)
+        {
+            User user = await _userRepository.GetByEmail(email);
 
             if (user == null)
                 throw new EntityNotFoundException($"User with email '{email}' was not found.");
 
-            UserResponseDto responseDto = _mapper.Map<UserResponseDto>(user);
+            UserResponseDto userDto = _mapper.Map<UserResponseDto>(user);
 
-            return responseDto;
+            userDto.Image = Convert.ToBase64String(user.Image);
+
+            return userDto;
         }
 
         public async Task UpdateMyInfo(UpdateMyInfoDto updateMyInfoDto)
@@ -44,7 +62,7 @@ namespace Backend.Services.UserService
             if (string.IsNullOrEmpty(email))
                 throw new SecurityTokenException("Token invalid");
 
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetByEmail(email);
 
             if (user == null)
                 throw new EntityNotFoundException($"User with email '{email}' was not found.");
@@ -52,6 +70,33 @@ namespace Backend.Services.UserService
             var updatedInfo = _mapper.Map(updateMyInfoDto, user);
 
             await _userRepository.UpdateUser(updatedInfo);
+        }
+
+        public async Task ChangeProfilePicture(ChangeProfilePictureDto changeProfilePictureDto)
+        {
+            var email = "";
+            if (_httpContextAccessor.HttpContext != null)
+                email = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            if (string.IsNullOrEmpty(email))
+                throw new SecurityTokenException("Token invalid");
+
+            var user = await _userRepository.GetByEmail(email);
+
+            if (user == null)
+                throw new EntityNotFoundException($"User with email '{email}' was not found.");
+
+            if (changeProfilePictureDto.ImageFile != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await changeProfilePictureDto.ImageFile.CopyToAsync(memoryStream);
+                    user.Image = memoryStream.ToArray();
+                }
+            }
+
+            await _userRepository.UpdateUser(user);
         }
 
         public async Task ChangePassword(ChangePasswordDto changePasswordDto)
@@ -63,7 +108,7 @@ namespace Backend.Services.UserService
             if (string.IsNullOrEmpty(email))
                 throw new SecurityTokenException("Token invalid");
 
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetByEmail(email);
 
             if (user == null)
                 throw new EntityNotFoundException($"User with email '{email}' was not found.");
@@ -72,6 +117,18 @@ namespace Backend.Services.UserService
                 throw new InvalidCredentialException("Current password is incorrect.");
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(changePasswordDto.NewPassword);
+
+            await _userRepository.UpdateUser(user);
+        }
+
+        public async Task DeleteUser(string email)
+        {
+            var user = await _userRepository.GetByEmail(email);
+
+            if (user == null)
+                throw new EntityNotFoundException($"User with email '{email}' was not found.");
+
+            user.IsDeleted = true;
 
             await _userRepository.UpdateUser(user);
         }

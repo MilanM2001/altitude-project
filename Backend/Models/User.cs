@@ -16,16 +16,15 @@ namespace Backend.Models
 
         [Required]
         [MinLength(8)]
-        [MaxLength(30)]
         public string Password { get; set; }
 
         [Required]
-        [MinLength(3)]
+        [MinLength(1)]
         [MaxLength(30)]
         public string Name { get; set; }
 
         [Required]
-        [MinLength(3)]
+        [MinLength(1)]
         [MaxLength(30)]
         public string Surname { get; set; }
 

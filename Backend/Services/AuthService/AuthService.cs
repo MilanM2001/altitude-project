@@ -4,6 +4,7 @@ using Backend.Models;
 using Backend.Models.DTOs.AuthDto;
 using Backend.Models.DTOs.UserDto;
 using Backend.Repositories.UserRepository;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -33,6 +34,11 @@ namespace Backend.Services.AuthService
 
         public async Task Register(RegisterDto registerDto)
         {
+            var existingUser = await _userRepository.GetByEmail(registerDto.Email);
+            if (existingUser != null)
+                throw new EntityExistsException("User with that email already exists");
+
+
             var user = _mapper.Map<User>(registerDto);
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
@@ -45,21 +51,61 @@ namespace Backend.Services.AuthService
 
         public async Task<AuthenticationResponseDto> Login(LoginDto loginDto)
         {
-            var user = await _userRepository.GetByEmailAsync(loginDto.Email);
+            var user = await _userRepository.GetByEmail(loginDto.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password))
                 throw new InvalidDataException("Invalid credentials");
-
-            var accessToken = GenerateAccessToken(user);
-            var refreshToken = GenerateRefreshToken(user);
+            else if (user.IsDeleted == true)
+                throw new UserDeletedException("User is deleted");
 
             var authenticationResponseDto = new AuthenticationResponseDto
             {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
+                AccessToken = GenerateAccessToken(user),
+                RefreshToken = GenerateRefreshToken(user)
             };
 
             return authenticationResponseDto;
+        }
+
+        public async Task<AuthenticationResponseDto> GoogleLogin(string googleToken)
+        {
+            var payload = await VerifyGoogleToken(googleToken);
+            if (payload == null)
+                throw new SecurityTokenException("Invalid Google Token");
+
+            var authenticationResponseDto = new AuthenticationResponseDto();
+
+            var email = payload.Email;
+            var existingUser = await _userRepository.GetByEmail(email);
+            User newUser = new User();
+
+            if (existingUser == null)
+            {
+                newUser = new User
+                {
+                    Email = email,
+                    Name = payload.GivenName,
+                    Surname = payload.FamilyName,
+                    Role = Models.Enums.Role.User,
+                    IsDeleted = false,
+                    Image = Array.Empty<byte>(),
+                };
+
+                //If the user does not exist then we return him but don't save him
+                authenticationResponseDto.AccessToken = "";
+                authenticationResponseDto.RefreshToken = "";
+                authenticationResponseDto.NewUser = newUser;
+                return authenticationResponseDto;
+            }
+
+
+            //If the user exists then create the tokens and log him in
+            authenticationResponseDto.AccessToken = GenerateAccessToken(existingUser ?? newUser);
+            authenticationResponseDto.RefreshToken = GenerateRefreshToken(existingUser ?? newUser);
+            authenticationResponseDto.NewUser = null;
+
+
+            return authenticationResponseDto; ;
         }
 
         public async Task<UserResponseDto> GetMe()
@@ -73,14 +119,32 @@ namespace Backend.Services.AuthService
                 throw new SecurityTokenException("Token invalid");
 
 
-            var user = await _userRepository.GetByEmailAsync(email);
+            var user = await _userRepository.GetByEmail(email);
 
             if (user == null)
                 throw new EntityNotFoundException($"User with email '{email}' was not found.");
 
-            var userResponse = _mapper.Map<UserResponseDto>(user);
+            UserResponseDto userResponse = _mapper.Map<UserResponseDto>(user);
+            userResponse.Image = Convert.ToBase64String(user.Image);
 
             return userResponse;
+        }
+
+        public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string token)
+        {
+            try
+            {
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new List<string> { "158219373742-gfbebtft5b3513a3nue58atin351fidi.apps.googleusercontent.com" }
+                };
+                var payload = await GoogleJsonWebSignature.ValidateAsync(token, settings);
+                return payload;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public string GenerateAccessToken(User user)
@@ -99,7 +163,7 @@ namespace Backend.Services.AuthService
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(10),
+                expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: creds
             );
 
@@ -161,7 +225,7 @@ namespace Backend.Services.AuthService
                     throw new SecurityTokenException("Invalid token");
                 }
 
-                var user = await _userRepository.GetByEmailAsync(email);
+                var user = await _userRepository.GetByEmail(email);
 
                 if (user == null)
                 {

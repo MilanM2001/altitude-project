@@ -8,8 +8,8 @@ import { useGetMe } from '../hooks/AuthHooks';
 import { useUpdateMyInfo } from '../hooks/UserHooks';
 
 const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required').min(2, 'Name should be at least 2 characters'),
-    surname: Yup.string().required('Surname is required').min(2, 'Surname should be at least 2 characters'),
+    name: Yup.string().required('Name is required').min(2, 'Name should be at least 2 characters').max(30, 'Name should be less than 30 characters'),
+    surname: Yup.string().required('Surname is required').min(2, 'Surname should be at least 2 characters').max(30, 'Surname should be less than 30 characters'),
     dateOfBirth: Yup.date().required('Date of Birth is required').max(new Date(), 'Date of Birth cannot be in the future'),
 });
 

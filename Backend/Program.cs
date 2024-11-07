@@ -28,9 +28,9 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        //ValidateIssuer = true,
+        ValidateIssuer = false,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        //ValidateAudience = true,
+        ValidateAudience = true,
         ValidAudience = builder.Configuration["Jwt:Audience"],
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
@@ -50,6 +50,11 @@ builder.Services.AddAuthentication(options =>
             return Task.CompletedTask;
         }
     };
+})
+.AddGoogle(options =>
+{
+    options.ClientId = "158219373742-gfbebtft5b3513a3nue58atin351fidi.apps.googleusercontent.com";
+    options.ClientSecret = "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";
 });
 
 builder.Services.AddHttpContextAccessor();
@@ -101,6 +106,13 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials();
         });
+    options.AddPolicy("AllowGoogleOAuth", builder =>
+    {
+        builder.WithOrigins("https://accounts.google.com")
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials();
+    });
 });
 
 var app = builder.Build();
@@ -112,6 +124,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowViteReact");
+app.UseCors("AllowGoogleOAuth");
 
 app.UseHttpsRedirection();
 

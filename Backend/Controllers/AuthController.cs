@@ -1,7 +1,10 @@
 ﻿using Backend.Exceptions;
+using Backend.Models;
 using Backend.Models.DTOs.AuthDto;
 using Backend.Models.DTOs.UserDto;
+using Backend.Repositories.UserRepository;
 using Backend.Services.AuthService;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +18,12 @@ namespace Backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IUserRepository _userRepository;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, IUserRepository userRepository)
         {
             _authService = authService;
+            _userRepository = userRepository;
         }
 
         [HttpPost("register")]
@@ -29,7 +34,14 @@ namespace Backend.Controllers
                 await _authService.Register(registerDto);
 
                 return Ok("User Registered");
-            } catch (Exception ex) {
+            }
+            catch (EntityExistsException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
                 return BadRequest(ex.Message);
             }
         }
@@ -43,9 +55,40 @@ namespace Backend.Controllers
 
                 return Ok(result);
             }
-            catch (InvalidDataException)
+            catch (InvalidDataException ex)
             {
-                return NotFound("Invalid credentials");
+                return NotFound(ex.Message);
+            }
+            catch (UserDeletedException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequest googleLoginRequest)
+        {
+            try
+            {
+                var result = await _authService.GoogleLogin(googleLoginRequest.Token);
+
+                //If the user doesn't exist then return Accepted with the new user info
+                if (result.NewUser != null)
+                {
+                    return Accepted(result);
+                } else
+                {
+                //If the user already exists then return the access and refresh token
+                    return Ok(result);
+                }
+            }
+            catch (SecurityTokenException ex)
+            {
+                return Unauthorized(ex.Message);
             }
             catch (Exception ex)
             {
@@ -59,25 +102,16 @@ namespace Backend.Controllers
             try
             {
                 var newAccessToken = await _authService.RefreshAccessToken(refreshTokenDto.RefreshToken);
-                return Ok(newAccessToken);
+                return Ok(new { AccessToken = newAccessToken });
             }
             catch (SecurityTokenException ex)
             {
-                Console.WriteLine(ex);
                 return Unauthorized(new { message = "Invalid refresh token", details = ex.Message });
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 return BadRequest(new { message = "Something went wrong", details = ex.Message });
             }
-        }
-
-        [HttpGet("test")]
-        [Authorize(Roles = "User, Admin")]
-        public async Task<IActionResult> Test()
-        {
-            return Ok("Works");
         }
 
         [HttpGet("getMe")]

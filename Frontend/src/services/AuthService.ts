@@ -1,4 +1,4 @@
-import { LoginRequestDto, RefreshTokenRequestDto, RegisterRequestDto } from "../model/auth"
+import { GoogleLoginRequest, LoginRequestDto, RefreshTokenRequestDto, RegisterRequestDto } from "../model/auth"
 import api from "./api"
 
 const register = async (registerData: RegisterRequestDto) => {
@@ -19,6 +19,17 @@ const login = async (loginData: LoginRequestDto) => {
         throw error
     }
 }
+
+const googleLogin = async (googleLoginRequest: GoogleLoginRequest) => {
+    try {
+        const response = await api.post("Auth/google-login", googleLoginRequest);
+
+        return response.data;
+    } catch (error) {
+        console.error("Error logging in with Google:", error);
+        throw error;
+    }
+};
 
 const refreshToken = async () => {
     try {
@@ -47,4 +58,4 @@ const getMe = async () => {
     }
 };
 
-export { register, login, refreshToken, getMe };
+export { register, login, googleLogin, refreshToken, getMe };

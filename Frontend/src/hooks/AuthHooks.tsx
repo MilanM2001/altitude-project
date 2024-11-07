@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginRequestDto, RegisterRequestDto } from "../model/auth";
-import { getMe, login, register } from "../services/AuthService";
+import { GoogleLoginRequest, LoginRequestDto, RegisterRequestDto } from "../model/auth";
+import { getMe, googleLogin, login, register } from "../services/AuthService";
 import { useAuth } from "../services/AuthContext";
+import { AppRoute } from "../routes/RoutesEnum";
 
 const useRegister = () => {
     const [loading, setIsLoading] = useState(false)
@@ -14,10 +15,10 @@ const useRegister = () => {
         try {
             setIsLoading(true)
             await register(registerData)
-            navigate("/login")
+            navigate(AppRoute.LOGIN)
         } catch (error: any) {
             if (error.response && error.response.status === 409) {
-                setErrorMessage("Username taken")
+                setErrorMessage("Email already taken")
             }
             setError(error)
         } finally {
@@ -42,10 +43,12 @@ const useLogin = () => {
             const accessToken = data.accessToken;
             const refreshToken = data.refreshToken;
             await loginContext(accessToken, refreshToken);
-            navigate("/");
+            navigate(AppRoute.MY_ACCOUNT);
         } catch (error: any) {
-            if (error.response && (error.response.status === 403 || error.response.status === 401 || error.response.status === 404)) {
+            if (error.response && (error.response.status === 401 || error.response.status === 404)) {
                 setErrorMessage('Username or Password incorrect');
+            } else if (error.response.status === 409) {
+                setErrorMessage('User deleted')
             }
             setError(error);
         } finally {
@@ -54,6 +57,39 @@ const useLogin = () => {
     };
 
     return { loginHandler, loading, error, errorMessage };
+};
+
+const useGoogleLogin = () => {
+    const [loading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const { login: loginContext } = useAuth();
+    const navigate = useNavigate();
+
+    const googleLoginHandler = async (googleLoginRequest: GoogleLoginRequest) => {
+        try {
+            setIsLoading(true);
+            const data = await googleLogin(googleLoginRequest);
+            //If the user exists then log him in
+            if (data.accessToken != "") {
+                const accessToken = data.accessToken;
+                const refreshToken = data.refreshToken;
+                await loginContext(accessToken, refreshToken);
+                navigate(AppRoute.MY_ACCOUNT);
+                //If he does not then return the object of the new user 
+            } else if (data.accessToken == "") {
+                return data.newUser
+            }
+
+        } catch (error: any) {
+            if (error.response) {
+                setError(error);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return { googleLoginHandler, loading, error };
 };
 
 const useLogout = () => {
@@ -98,4 +134,4 @@ const useGetMe = () => {
     return { getMeHandler, loading, error }
 }
 
-export { useRegister, useLogin, useLogout, useGetMe }
+export { useRegister, useLogin, useGoogleLogin, useLogout, useGetMe }

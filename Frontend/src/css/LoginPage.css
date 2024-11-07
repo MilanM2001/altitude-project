@@ -37,6 +37,11 @@
     background-color: #005bb5;
 }
 
+.error-message {
+    text-align: center;
+    color: red;
+}
+
 .MuiFormHelperText-root {
     font-size: 12px;
     color: red;

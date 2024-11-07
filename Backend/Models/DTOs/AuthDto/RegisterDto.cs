@@ -17,12 +17,12 @@ namespace Backend.Models.DTOs.AuthDto
         public string Password { get; set; }
 
         [Required]
-        [MinLength(3)]
+        [MinLength(1)]
         [MaxLength(60)]
         public string Name { get; set; }
 
         [Required]
-        [MinLength(3)]
+        [MinLength(1)]
         [MaxLength(60)]
         public string Surname { get; set; }
 
