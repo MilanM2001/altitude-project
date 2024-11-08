@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ChangePasswordDto, UpdateMyInfoDto, UserResponseDto } from "../model/user"
-import { changePassword, changeProfilePicture, deleteUser, getAllUsersPageable, getUserByEmail, updateMyInfo } from "../services/UserService"
+import { changePassword, changeProfilePicture, changeTwoFactorStatus, deleteUser, getAllUsersPageable, getUserByEmail, updateMyInfo } from "../services/UserService"
 import { AppRoute } from "../routes/RoutesEnum"
 
 const useGetAllUsersPageable = () => {
@@ -151,11 +151,32 @@ const useChangePassword = () => {
     return { ChangePasswordHandler, loading, error, errorMessage }
 }
 
+const useChangeTwoFactorStatus = () => {
+    const [loading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const [errorMessage, setErrorMessage] = useState('')
+
+    const changeTwoFactorStatusHandler = async () => {
+        try {
+            setIsLoading(true)
+            await changeTwoFactorStatus()
+        } catch (error: any) {
+            if (error.response) {
+                setErrorMessage("Error updating my info")
+            }
+            setError(error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    return { changeTwoFactorStatusHandler, loading, error, errorMessage }
+}
+
 const useDeleteUser = () => {
     const [loading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
     const [errorMessage, setErrorMessage] = useState('')
-    // const navigate = useNavigate()
 
     const DeleteUserHandler = async (email: string) => {
         try {
@@ -176,4 +197,4 @@ const useDeleteUser = () => {
     return { DeleteUserHandler, loading, error, errorMessage }
 }
 
-export { useGetAllUsersPageable, useGetUserByEmail, useUpdateMyInfo, useChangeProfilePicture, useChangePassword, useDeleteUser }
+export { useGetAllUsersPageable, useGetUserByEmail, useUpdateMyInfo, useChangeProfilePicture, useChangePassword, useChangeTwoFactorStatus, useDeleteUser }

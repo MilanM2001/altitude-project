@@ -1,17 +1,21 @@
 import { Box, Typography, Container, Grid, Paper, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useEffect, useState } from 'react';
-import '../css/MyAccountPage.css';
 import placeholderImage from '../assets/profile-placeholder.jpg';
 import { useGetMe } from '../hooks/AuthHooks';
+import '../css/MyAccountPage.css'
 import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '../routes/RoutesEnum';
 import { useChangeProfilePicture } from '../hooks/UserHooks';
+import { useChangeTwoFactorStatus } from '../hooks/UserHooks';
 
 const MyAccountPage = () => {
     const { getMeHandler } = useGetMe();
     const { ChangeProfilePictureHandler } = useChangeProfilePicture();
+    const { changeTwoFactorStatusHandler, loading: loading2FA } = useChangeTwoFactorStatus();
+
     const [userData, setUserData] = useState<any>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [is2FADialogOpen, setIs2FADialogOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -46,9 +50,21 @@ const MyAccountPage = () => {
         handleDialogClose();
     };
 
+    // Handle 2FA Dialog open/close
+    const handle2FADialogOpen = () => setIs2FADialogOpen(true);
+    const handle2FADialogClose = () => setIs2FADialogOpen(false);
+
+    // Trigger 2FA status change and close dialog
+    const confirm2FAChange = async () => {
+        await changeTwoFactorStatusHandler();
+        const res = await getMeHandler(); // Refresh user data
+        setUserData(res);
+        handle2FADialogClose();
+    };
+
     return (
         <Container className="account-container">
-            <Paper className="account-box" elevation={3}>
+            <Paper className="account-box">
                 <Box mb={5} textAlign="center">
                     <Typography variant="h4" className="account-title">My Information</Typography>
                 </Box>
@@ -58,6 +74,9 @@ const MyAccountPage = () => {
                             <Box className="account-detail-box">
                                 <Typography variant="h6" className="account-label"><b>Email:</b> {userData.email}</Typography>
                                 <Typography variant="h6" className="account-label"><b>Role:</b> {userData.role}</Typography>
+                                <Typography variant="h6" className="account-label">
+                                    <b>Two-Factor Authentication:</b> {userData.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                                </Typography>
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={4} textAlign="center">
@@ -101,9 +120,16 @@ const MyAccountPage = () => {
                     >
                         Change Password
                     </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        className="action-button"
+                        onClick={handle2FADialogOpen}
+                    >
+                        {userData?.twoFactorEnabled ? 'Disable' : 'Enable'} Two-Factor
+                    </Button>
                 </Box>
             </Paper>
-
 
             <Dialog open={isDialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Select a Profile Picture</DialogTitle>
@@ -111,8 +137,19 @@ const MyAccountPage = () => {
                     <input type="file" accept="image/*" onChange={handleFileChange} />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleDialogClose} color="primary">
-                        Cancel
+                    <Button onClick={handleDialogClose} color="primary">Cancel</Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={is2FADialogOpen} onClose={handle2FADialogClose}>
+                <DialogTitle>Confirm Two-Factor Authentication</DialogTitle>
+                <DialogContent>
+                    <Typography>Are you sure you want to {userData?.twoFactorEnabled ? 'disable' : 'enable'} two-factor authentication?</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handle2FADialogClose} color="primary">Cancel</Button>
+                    <Button onClick={confirm2FAChange} color="secondary" disabled={loading2FA}>
+                        Confirm
                     </Button>
                 </DialogActions>
             </Dialog>

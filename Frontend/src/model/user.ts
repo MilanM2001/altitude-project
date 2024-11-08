@@ -11,6 +11,8 @@ export type UserResponseDto = {
     role: string
     dateOfBirth: Date
     isDeleted: boolean
+    isVerified: boolean
+    TwoFactorEnabled: boolean
     image: File | null
 }
 

@@ -116,6 +116,21 @@ namespace Backend.Controllers
             }
         }
 
+        [HttpPut("changeTwoFactorStatus")]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> ChangeTwoFactorStatus()
+        {
+            try
+            {
+                await _userService.ChangeTwoFactorStatus();
+                return Ok("Two Factor status changed");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("deleteUser/{email}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser([FromRoute] string email)

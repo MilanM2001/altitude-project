@@ -56,7 +56,7 @@ const ChangePasswordPage = () => {
                                 onBlur={handleBlur}
                                 error={touched.newPassword && errors.newPassword ? errors.newPassword : ''}
                             />
-                            {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+                            {errorMessage && <Typography className='error-message' color="error">{errorMessage}</Typography>}
                             <Button
                                 type="submit"
                                 variant="contained"

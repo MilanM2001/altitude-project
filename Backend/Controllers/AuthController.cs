@@ -1,9 +1,11 @@
 ﻿using Backend.Exceptions;
 using Backend.Models;
 using Backend.Models.DTOs.AuthDto;
+using Backend.Models.DTOs.EmailDto;
 using Backend.Models.DTOs.UserDto;
 using Backend.Repositories.UserRepository;
 using Backend.Services.AuthService;
+using Backend.Services.EmailService;
 using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -18,12 +20,12 @@ namespace Backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly IUserRepository _userRepository;
+        private readonly IEmailService _emailService;
 
-        public AuthController(IAuthService authService, IUserRepository userRepository)
+        public AuthController(IAuthService authService, IEmailService emailService)
         {
             _authService = authService;
-            _userRepository = userRepository;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -63,9 +65,16 @@ namespace Backend.Controllers
             {
                 return Conflict(ex.Message);
             }
-            catch (Exception ex)
+            catch (UserNotVerifiedException)
             {
-                return BadRequest(ex.Message);
+                return Forbid();
+            }
+            catch (TwoFactorEnabledException) {
+                return StatusCode(405);
+            }
+            catch (EntityExistsException)
+            {
+                return StatusCode(408);
             }
         }
 
@@ -111,6 +120,51 @@ namespace Backend.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { message = "Something went wrong", details = ex.Message });
+            }
+        }
+
+        [HttpPost("verify-email")]
+        public async Task<IActionResult> VerifyEmail(VerifyEmailDto verifyEmailDto)
+        {
+            try
+            {
+                await _emailService.VerifyEmail(verifyEmailDto);
+
+                return Ok("Email Verified");
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidCodeException ex)
+            {
+                return Conflict(ex.Message);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("verify-two-factor")]
+        public async Task<IActionResult> VerifyTwoFactor(VerifyTwoFactorDto verifyTwoFactorDto)
+        {
+            try
+            {
+                var result = await _emailService.VerifyTwoFactorAuthentication(verifyTwoFactorDto);
+
+                return Ok(result);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidCodeException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

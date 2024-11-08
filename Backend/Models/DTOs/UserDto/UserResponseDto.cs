@@ -16,6 +16,8 @@
 
         public bool IsDeleted { get; set; }
 
-        
+        public bool IsVerified { get; set; }
+
+        public bool TwoFactorEnabled { get; set; }
     }
 }

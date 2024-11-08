@@ -121,6 +121,28 @@ namespace Backend.Services.UserService
             await _userRepository.UpdateUser(user);
         }
 
+        public async Task ChangeTwoFactorStatus()
+        {
+            var email = "";
+            if (_httpContextAccessor.HttpContext != null)
+                email = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            if (string.IsNullOrEmpty(email))
+                throw new SecurityTokenException("Token invalid");
+
+            var user = await _userRepository.GetByEmail(email);
+
+            if (user == null)
+                throw new EntityNotFoundException($"User with email '{email}' was not found.");
+
+            if (user.TwoFactorEnabled == false)
+                user.TwoFactorEnabled = true;
+            else user.TwoFactorEnabled = false;
+
+            await _userRepository.UpdateUser(user);
+        }
+
         public async Task DeleteUser(string email)
         {
             var user = await _userRepository.GetByEmail(email);

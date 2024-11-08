@@ -9,6 +9,7 @@ namespace Backend.Services.UserService
         Task UpdateMyInfo(UpdateMyInfoDto updateInfoDto);
         Task ChangeProfilePicture(ChangeProfilePictureDto changeProfilePictureDto);
         Task ChangePassword(ChangePasswordDto changePasswordDto);
+        Task ChangeTwoFactorStatus();
         Task DeleteUser(string email);
     }
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleLoginRequest, LoginRequestDto, RegisterRequestDto } from "../model/auth";
-import { getMe, googleLogin, login, register } from "../services/AuthService";
+import { GoogleLoginRequest, LoginRequestDto, RegisterRequestDto, VerifyEmailDto, VerifyTwoFactorDto } from "../model/auth";
+import { getMe, googleLogin, login, register, verifyEmail, verifyTwoFactor } from "../services/AuthService";
 import { useAuth } from "../services/AuthContext";
 import { AppRoute } from "../routes/RoutesEnum";
 
@@ -45,10 +45,16 @@ const useLogin = () => {
             await loginContext(accessToken, refreshToken);
             navigate(AppRoute.MY_ACCOUNT);
         } catch (error: any) {
-            if (error.response && (error.response.status === 401 || error.response.status === 404)) {
+            if (error.response && (error.response.status === 404)) {
                 setErrorMessage('Username or Password incorrect');
             } else if (error.response.status === 409) {
                 setErrorMessage('User deleted')
+            } else if (error.response.status === 403) {
+                setErrorMessage("Email not verified")
+            } else if (error.response.status === 405) {
+                setErrorMessage("Two factor enabled. A code has been sent to your email")
+            } else if (error.response.status === 408) {
+                setErrorMessage("Two factor code has already been sent to your email")
             }
             setError(error);
         } finally {
@@ -114,6 +120,50 @@ const useLogout = () => {
     return { logoutHandler, loading, error };
 };
 
+const useVerifyEmail = () => {
+    const [loading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const navigate = useNavigate()
+
+    const verifyEmailHandler = async (verifyEmailDto: VerifyEmailDto) => {
+        try {
+            setIsLoading(true)
+            await verifyEmail(verifyEmailDto)
+            navigate(AppRoute.LOGIN)
+        } catch (error: any) {
+            setError(error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    return { verifyEmailHandler, loading, error }
+}
+
+const useVerifyTwoFactor = () => {
+    const [loading, setIsLoading] = useState(false)
+    const [error, setError] = useState(null)
+    const navigate = useNavigate()
+    const { login: loginContext } = useAuth();
+
+    const verifyTwoFactorHandler = async (verifyTwoFactorDto: VerifyTwoFactorDto) => {
+        try {
+            setIsLoading(true)
+            const data = await verifyTwoFactor(verifyTwoFactorDto)
+            const accessToken = data.accessToken;
+            const refreshToken = data.refreshToken;
+            await loginContext(accessToken, refreshToken);
+            navigate(AppRoute.MY_ACCOUNT);
+        } catch (error: any) {
+            setError(error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    return { verifyTwoFactorHandler, loading, error }
+}
+
 const useGetMe = () => {
     const [loading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -134,4 +184,4 @@ const useGetMe = () => {
     return { getMeHandler, loading, error }
 }
 
-export { useRegister, useLogin, useGoogleLogin, useLogout, useGetMe }
+export { useRegister, useLogin, useGoogleLogin, useLogout, useVerifyEmail, useVerifyTwoFactor, useGetMe }

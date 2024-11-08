@@ -38,6 +38,12 @@ namespace Backend.Models
         public byte[] Image { get; set; }
 
         [Required]
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
+
+        [Required]
+        public bool IsVerified { get; set; }
+
+        [Required]
+        public bool TwoFactorEnabled { get; set; } = false;
     }
 }

@@ -11,6 +11,8 @@ import MyAccountPage from "../pages/MyAccountPage";
 import UpdateInfoPage from "../pages/UpdateInfoPage";
 import ChangePasswordPage from "../pages/ChangePasswordPage";
 import UserDetailsPage from "../pages/UserDetailsPage";
+import VerifyEmailPage from "../pages/VerifyEmailPage";
+import VerifyTwoFactorPage from "../pages/VerifyTwoFactorPage";
 
 const AppRoutes = () => {
     return (
@@ -20,6 +22,8 @@ const AppRoutes = () => {
             <Route element={<NoAuthRoutesOutlet />}>
                 <Route path={AppRoute.LOGIN} element={<LoginPage />} />
                 <Route path={AppRoute.REGISTER} element={<RegisterPage />} />
+                <Route path={AppRoute.VERIFY_EMAIL} element={<VerifyEmailPage />} />
+                <Route path={AppRoute.VERIFY_TWO_FACTOR} element={<VerifyTwoFactorPage />} />
             </Route>
 
             /* Routes all authenticated users can access */

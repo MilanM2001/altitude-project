@@ -1,4 +1,4 @@
-import { GoogleLoginRequest, LoginRequestDto, RefreshTokenRequestDto, RegisterRequestDto } from "../model/auth"
+import { GoogleLoginRequest, LoginRequestDto, RefreshTokenRequestDto, RegisterRequestDto, VerifyEmailDto, VerifyTwoFactorDto } from "../model/auth"
 import api from "./api"
 
 const register = async (registerData: RegisterRequestDto) => {
@@ -48,6 +48,25 @@ const refreshToken = async () => {
     }
 }
 
+const verifyEmail = async (verifyEmailDto: VerifyEmailDto) => {
+    try {
+        await api.post("/Auth/verify-email", verifyEmailDto)
+    } catch (error) {
+        console.error("Register error:", error)
+        throw error
+    }
+}
+
+const verifyTwoFactor = async (verifyTwoFactorDto: VerifyTwoFactorDto) => {
+    try {
+        const response = await api.post("/Auth/verify-two-factor", verifyTwoFactorDto)
+        return response.data
+    } catch (error) {
+        console.error("Register error:", error)
+        throw error
+    }
+}
+
 const getMe = async () => {
     try {
         const response = await api.get('/Auth/getMe');
@@ -58,4 +77,4 @@ const getMe = async () => {
     }
 };
 
-export { register, login, googleLogin, refreshToken, getMe };
+export { register, login, googleLogin, refreshToken, verifyEmail, verifyTwoFactor, getMe };

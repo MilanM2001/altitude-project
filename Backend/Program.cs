@@ -2,15 +2,25 @@ using Backend.Data;
 using Backend.Mappings;
 using Backend.Repositories.UserRepository;
 using Backend.Services.AuthService;
+using Backend.Services.EmailService;
 using Backend.Services.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 
+using DotNetEnv;
+using Backend.Repositories.EmailVerificationCodeRepository;
+using Backend.Services.EmailVerificationService;
+using Backend.Repositories.TwoFactorAuthenticationRepository;
+using Backend.Services.TwoFactorAuthenticationService;
+
 var builder = WebApplication.CreateBuilder(args);
+Env.Load();
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<JwtSecurityTokenHandler>();
@@ -60,13 +70,32 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
+builder.Services.AddScoped<ITwoFactorAuthenticationRepository, TwoFactorAuthenticationRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
+builder.Services.AddScoped<ITwoFactorAuthenticationService, TwoFactorAuthenticationService>();
+
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSingleton<SmtpClient>(provider =>
+{
+    var client = new SmtpClient("smtp.gmail.com");
+    client.Port = 587;
+    client.Credentials = new NetworkCredential(
+        Environment.GetEnvironmentVariable("SMTP_USERNAME"),
+        Environment.GetEnvironmentVariable("SMTP_PASSWORD")
+    );
+    client.EnableSsl = true;
+    return client;
+});
+
 builder.Services.AddSwaggerGen(options =>
 {
 

@@ -125,7 +125,7 @@ const LoginPage = () => {
                                 onBlur={handleBlur}
                                 error={touched.password && errors.password ? errors.password : ''}
                             />
-                            {errorMessage && <Typography className="err" color="error">{errorMessage}</Typography>}
+                            {errorMessage && <Typography className="error-message" color="error">{errorMessage}</Typography>}
                             <Button
                                 type="submit"
                                 variant="contained"

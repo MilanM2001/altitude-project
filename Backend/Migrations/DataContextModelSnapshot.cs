@@ -22,6 +22,37 @@ namespace Backend.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Backend.Models.EmailVerification", b =>
+                {
+                    b.Property<string>("UserEmail")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("UserEmail");
+
+                    b.ToTable("EmailVerifications");
+                });
+
+            modelBuilder.Entity("Backend.Models.TwoFactorAuthentication", b =>
+                {
+                    b.Property<string>("UserEmail")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("ExpirationTime")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("UserEmail");
+
+                    b.ToTable("TwoFactorAuthentications");
+                });
+
             modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Property<string>("Email")
@@ -38,6 +69,9 @@ namespace Backend.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -45,8 +79,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -56,6 +89,9 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Email");
 

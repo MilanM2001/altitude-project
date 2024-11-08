@@ -60,6 +60,15 @@ const changePassword = async (changePasswordDto: ChangePasswordDto) => {
     }
 }
 
+const changeTwoFactorStatus = async () => {
+    try {
+        await api.put("/User/changeTwoFactorStatus")
+    } catch (error) {
+        console.error("Change Two Factor Status error:", error)
+        throw error
+    }
+}
+
 const deleteUser = async (email: string) => {
     try {
         await api.put(`/User/deleteUser/${email}`)
@@ -69,4 +78,4 @@ const deleteUser = async (email: string) => {
     }
 }
 
-export { getAllUsersPageable, getUserByEmail, updateMyInfo, changeProfilePicture, changePassword, deleteUser }
+export { getAllUsersPageable, getUserByEmail, updateMyInfo, changeProfilePicture, changePassword, changeTwoFactorStatus, deleteUser }

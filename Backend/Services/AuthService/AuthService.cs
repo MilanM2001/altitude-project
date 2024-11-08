@@ -3,7 +3,11 @@ using Backend.Exceptions;
 using Backend.Models;
 using Backend.Models.DTOs.AuthDto;
 using Backend.Models.DTOs.UserDto;
+using Backend.Repositories.EmailVerificationCodeRepository;
+using Backend.Repositories.TwoFactorAuthenticationRepository;
 using Backend.Repositories.UserRepository;
+using Backend.Services.EmailService;
+using Backend.Services.TwoFactorAuthenticationService;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -17,15 +21,24 @@ namespace Backend.Services.AuthService
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IEmailVerificationRepository _emailVerificationRepository;
+        private readonly ITwoFactorAuthenticationService _twoFactorAuthenticationService;
+        private readonly ITwoFactorAuthenticationRepository _twoFactorAuthenticationRepository;
+        private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IUserRepository userRepository, IMapper mapper,
+        public AuthService(IUserRepository userRepository, IEmailVerificationRepository emailVerificationRepository, ITwoFactorAuthenticationService twoFactorAuthenticationService,
+            ITwoFactorAuthenticationRepository twoFactorAuthenticationRepository, IEmailService emailService, IMapper mapper,
             IConfiguration configuration, JwtSecurityTokenHandler tokenHandler, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
+            _emailVerificationRepository = emailVerificationRepository;
+            _twoFactorAuthenticationService = twoFactorAuthenticationService;
+            _twoFactorAuthenticationRepository = twoFactorAuthenticationRepository;
+            _emailService = emailService;
             _mapper = mapper;
             _configuration = configuration;
             _tokenHandler = tokenHandler;
@@ -45,8 +58,20 @@ namespace Backend.Services.AuthService
             user.IsDeleted = false;
             user.Image = Array.Empty<byte>();
             user.Role = Models.Enums.Role.User;
+            user.IsVerified = false;
+            var verificationCode = Guid.NewGuid().ToString("N").Substring(0, 6);
+            var emailVerification = new EmailVerification
+            {
+                UserEmail = user.Email,
+                Code = verificationCode,
+            };
+            //Verification is off for now so that I can create users with fake emails
+            //To turn the verification on, just set the IsVerified to false and uncomment the SendVerificationEmail below.
+            //After the user is registered, a code and a link will be send to his email. Enter the code in the input field after accessing the link
 
             await _userRepository.AddUserAsync(user);
+            await _emailVerificationRepository.SaveAsync(emailVerification);
+            await _emailService.SendVerificationEmail(user.Email, verificationCode);
         }
 
         public async Task<AuthenticationResponseDto> Login(LoginDto loginDto)
@@ -57,6 +82,19 @@ namespace Backend.Services.AuthService
                 throw new InvalidDataException("Invalid credentials");
             else if (user.IsDeleted == true)
                 throw new UserDeletedException("User is deleted");
+            else if (user.IsVerified == false)
+                throw new UserNotVerifiedException("User is not verified");
+            else if (user.TwoFactorEnabled == true)
+            {
+                var existingTwoFactor = await _twoFactorAuthenticationRepository.GetByUserEmailAsync(loginDto.Email);
+                if (existingTwoFactor == null)
+                {
+                    await _twoFactorAuthenticationService.GenerateAndSendTwoFactorCodeAsync(user.Email);
+                    throw new TwoFactorEnabledException("Two Factor Authentication sent");
+                }
+                else
+                    throw new EntityExistsException("Two factor code has already been sent");      
+            }
 
             var authenticationResponseDto = new AuthenticationResponseDto
             {
