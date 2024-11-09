@@ -13,7 +13,7 @@ export type UserResponseDto = {
     isDeleted: boolean
     isVerified: boolean
     TwoFactorEnabled: boolean
-    image: File | null
+    image: string
 }
 
 export type ChangeProfilePictureDto = {

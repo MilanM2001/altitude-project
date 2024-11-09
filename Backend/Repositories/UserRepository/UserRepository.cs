@@ -14,7 +14,8 @@ namespace Backend.Repositories.UserRepository
             _context = context;
         }
 
-        public async Task<(List<User>, int)> GetAllPageable(int pageNumber, int pageSize, string? email = null, DateOnly? dateOfBirth = null)
+        public async Task<(List<User>, int)> GetAllPageable(
+    int pageNumber, int pageSize, string? email = null, DateOnly? dateOfBirth = null, bool? isVerified = null)
         {
             var query = _context.Users.AsQueryable();
 
@@ -26,6 +27,11 @@ namespace Backend.Repositories.UserRepository
             if (dateOfBirth.HasValue)
             {
                 query = query.Where(u => u.DateOfBirth == dateOfBirth);
+            }
+
+            if (isVerified.HasValue)
+            {
+                query = query.Where(u => u.IsVerified == isVerified.Value);
             }
 
             var totalRecords = await query.CountAsync();

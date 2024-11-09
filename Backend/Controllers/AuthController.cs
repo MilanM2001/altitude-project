@@ -76,6 +76,14 @@ namespace Backend.Controllers
             {
                 return StatusCode(408);
             }
+            catch (TwoFactorExpiredException)
+            {
+                return StatusCode(498);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("google-login")]
@@ -98,6 +106,30 @@ namespace Backend.Controllers
             catch (SecurityTokenException ex)
             {
                 return Unauthorized(ex.Message);
+            }
+            catch (InvalidDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (UserDeletedException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (UserNotVerifiedException)
+            {
+                return Forbid();
+            }
+            catch (TwoFactorEnabledException)
+            {
+                return StatusCode(405);
+            }
+            catch (EntityExistsException)
+            {
+                return StatusCode(408);
+            }
+            catch (TwoFactorExpiredException)
+            {
+                return StatusCode(498);
             }
             catch (Exception ex)
             {

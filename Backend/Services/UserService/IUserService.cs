@@ -4,7 +4,7 @@ namespace Backend.Services.UserService
 {
     public interface IUserService
     {
-        Task<(List<UserResponseDto>, int)> GetAllPageable(int pageNumber, int pageSize, string? email, DateOnly? dateOfBirth);
+        Task<(List<UserResponseDto>, int)> GetAllPageable(int pageNumber, int pageSize, string? email, DateOnly? dateOfBirth, bool? isVerified);
         Task<UserResponseDto> GetByEmail(string email);
         Task UpdateMyInfo(UpdateMyInfoDto updateInfoDto);
         Task ChangeProfilePicture(ChangeProfilePictureDto changeProfilePictureDto);

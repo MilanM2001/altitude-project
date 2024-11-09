@@ -1,7 +1,7 @@
 import { ChangePasswordDto, UpdateMyInfoDto } from "../model/user"
 import api from "./api"
 
-const getAllUsersPageable = async (pageNumber = 1, pageSize = 6, email = '', dateOfBirth = '') => {
+const getAllUsersPageable = async (pageNumber = 1, pageSize = 6, email = '', dateOfBirth = '', isVerified: boolean | null = null) => {
     try {
         const response = await api.get(`/User/allPageable`, {
             params: {
@@ -9,6 +9,7 @@ const getAllUsersPageable = async (pageNumber = 1, pageSize = 6, email = '', dat
                 pageSize,
                 email: email || undefined,
                 dateOfBirth: dateOfBirth || undefined,
+                isVerified: isVerified !== null ? isVerified : undefined, 
             },
         });
         return response.data;

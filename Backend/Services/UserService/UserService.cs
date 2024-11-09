@@ -22,9 +22,10 @@ namespace Backend.Services.UserService
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<(List<UserResponseDto>, int)> GetAllPageable(int pageNumber, int pageSize, string? email = null, DateOnly? dateOfBirth = null)
+        public async Task<(List<UserResponseDto>, int)> GetAllPageable(
+            int pageNumber, int pageSize, string? email = null, DateOnly? dateOfBirth = null, bool? isVerified = null)
         {
-            var (users, totalRecords) = await _userRepository.GetAllPageable(pageNumber, pageSize, email, dateOfBirth);
+            var (users, totalRecords) = await _userRepository.GetAllPageable(pageNumber, pageSize, email, dateOfBirth, isVerified);
 
             var usersDto = _mapper.Map<List<UserResponseDto>>(users);
             for (int i = 0; i < usersDto.Count; i++)

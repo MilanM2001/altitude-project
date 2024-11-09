@@ -86,14 +86,25 @@ namespace Backend.Services.AuthService
                 throw new UserNotVerifiedException("User is not verified");
             else if (user.TwoFactorEnabled == true)
             {
+                //If two factor is enabled, check if a two factor code for the user already exists inside the database
+                //If it doesn't exist, create a new two factor code and send it to the user
                 var existingTwoFactor = await _twoFactorAuthenticationRepository.GetByUserEmailAsync(loginDto.Email);
                 if (existingTwoFactor == null)
-                {
+                { 
                     await _twoFactorAuthenticationService.GenerateAndSendTwoFactorCodeAsync(user.Email);
                     throw new TwoFactorEnabledException("Two Factor Authentication sent");
                 }
-                else
-                    throw new EntityExistsException("Two factor code has already been sent");      
+                //If the two factor code does exist, first check if its expired
+                else {
+                    //If the code is expired, delete it and send a new one
+                    if (existingTwoFactor.ExpirationTime < DateTime.UtcNow)
+                    {
+                        await _twoFactorAuthenticationService.GenerateAndSendTwoFactorCodeAsync(user.Email);
+                        throw new TwoFactorExpiredException("Two Factor expired, new one sent");
+                    }
+                    
+                    throw new EntityExistsException("Two factor code has already been sent");
+                }
             }
 
             var authenticationResponseDto = new AuthenticationResponseDto
@@ -136,6 +147,33 @@ namespace Backend.Services.AuthService
                 return authenticationResponseDto;
             }
 
+            if (existingUser.IsDeleted == true)
+                throw new UserDeletedException("User is deleted");
+            else if (existingUser.IsVerified == false)
+                throw new UserNotVerifiedException("User is not verified");
+            else if (existingUser.TwoFactorEnabled == true)
+            {
+                //If two factor is enabled, check if a two factor code for the user already exists inside the database
+                //If it doesn't exist, create a new two factor code and send it to the user
+                var existingTwoFactor = await _twoFactorAuthenticationRepository.GetByUserEmailAsync(payload.Email);
+                if (existingTwoFactor == null)
+                {
+                    await _twoFactorAuthenticationService.GenerateAndSendTwoFactorCodeAsync(payload.Email);
+                    throw new TwoFactorEnabledException("Two Factor Authentication sent");
+                }
+                //If the two factor code does exist, first check if its expired
+                else
+                {
+                    //If the code is expired, delete it and send a new one
+                    if (existingTwoFactor.ExpirationTime < DateTime.UtcNow)
+                    {
+                        await _twoFactorAuthenticationService.GenerateAndSendTwoFactorCodeAsync(payload.Email);
+                        throw new TwoFactorExpiredException("Two Factor expired, new one sent");
+                    }
+
+                    throw new EntityExistsException("Two factor code has already been sent");
+                }
+            }
 
             //If the user exists then create the tokens and log him in
             authenticationResponseDto.AccessToken = GenerateAccessToken(existingUser ?? newUser);

@@ -55,6 +55,8 @@ const useLogin = () => {
                 setErrorMessage("Two factor enabled. A code has been sent to your email")
             } else if (error.response.status === 408) {
                 setErrorMessage("Two factor code has already been sent to your email")
+            } else if (error.response.status === 498) {
+                setErrorMessage("Two factor code expired. A new one has been sent to your email")
             }
             setError(error);
         } finally {
@@ -68,6 +70,7 @@ const useLogin = () => {
 const useGoogleLogin = () => {
     const [loading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
     const { login: loginContext } = useAuth();
     const navigate = useNavigate();
 
@@ -87,15 +90,24 @@ const useGoogleLogin = () => {
             }
 
         } catch (error: any) {
-            if (error.response) {
-                setError(error);
+            if (error.response.status === 409) {
+                setErrorMessage('User deleted')
+            } else if (error.response.status === 403) {
+                setErrorMessage("Email not verified")
+            } else if (error.response.status === 405) {
+                setErrorMessage("Two factor enabled. A code has been sent to your email")
+            } else if (error.response.status === 408) {
+                setErrorMessage("Two factor code has already been sent to your email")
+            } else if (error.response.status === 498) {
+                setErrorMessage("Two factor code expired. A new one has been sent to your email")
             }
+            setError(error)
         } finally {
             setIsLoading(false);
         }
     };
 
-    return { googleLoginHandler, loading, error };
+    return { googleLoginHandler, loading, error, errorMessage };
 };
 
 const useLogout = () => {

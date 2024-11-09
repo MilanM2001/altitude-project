@@ -59,7 +59,7 @@ const UserDetailsPage = () => {
 
     const handleDeleteConfirmation = async () => {
         await DeleteUserHandler(email);
-        setIsDeleted(true); // Set isDeleted to true after deletion
+        setIsDeleted(true);
         setOpenDialog(false);
     };
 
@@ -83,6 +83,7 @@ const UserDetailsPage = () => {
                             <Box className="account-detail-box">
                                 <Typography variant="h6" className="account-label"><b>Email:</b> {user.email}</Typography>
                                 <Typography variant="h6" className="account-label"><b>Role:</b> {user.role}</Typography>
+                                <Typography variant="h6" className="account-label"><b>Is Verified:</b> {`${user.isVerified ? 'Yes' : 'No'}`}</Typography>
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={4} textAlign="center">

@@ -37,11 +37,10 @@ const modalValidationSchema = Yup.object().shape({
 const LoginPage = () => {
     const { loginHandler, loading, errorMessage } = useLogin();
     const { registerHandler } = useRegister();
-    const { googleLoginHandler } = useGoogleLogin();
+    const { googleLoginHandler, loading: googleLoading, errorMessage: googleErrorMessage } = useGoogleLogin();
 
     const [newUser, setNewUser] = useState<UserResponseDto | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [isGoogleLogin, setIsGoogleLogin] = useState(false);
 
     const handleSubmit = async (values: any) => {
@@ -125,16 +124,20 @@ const LoginPage = () => {
                                 onBlur={handleBlur}
                                 error={touched.password && errors.password ? errors.password : ''}
                             />
-                            {errorMessage && <Typography className="error-message" color="error">{errorMessage}</Typography>}
+                            {(errorMessage || googleErrorMessage) && (
+                                <Typography className="error-message" color="error" align="center">
+                                    {errorMessage || googleErrorMessage}
+                                </Typography>
+                            )}
                             <Button
                                 type="submit"
                                 variant="contained"
                                 color="primary"
                                 fullWidth
                                 className="login-button"
-                                disabled={loading}
+                                disabled={loading || googleLoading}
                             >
-                                {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
+                                {loading || googleLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
                             </Button>
                         </Form>
                     )}
@@ -147,6 +150,9 @@ const LoginPage = () => {
                         <GoogleLogin
                             onSuccess={handleGoogleSuccess}
                             onError={handleGoogleFailure}
+                            theme="outline"
+                            shape="circle"
+                            isLoading={googleLoading}
                         />
                     </GoogleOAuthProvider>
                 </div>

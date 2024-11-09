@@ -23,14 +23,15 @@ namespace Backend.Controllers
 
         [HttpGet("allPageable")]
         public async Task<IActionResult> GetAllPageable(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 6,
-        [FromQuery] string? email = null,
-        [FromQuery] DateOnly? dateOfBirth = null)
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 6,
+            [FromQuery] string? email = null,
+            [FromQuery] DateOnly? dateOfBirth = null,
+            [FromQuery] bool? isVerified = null)
         {
             try
             {
-                var (users, totalRecords) = await _userService.GetAllPageable(pageNumber, pageSize, email, dateOfBirth);
+                var (users, totalRecords) = await _userService.GetAllPageable(pageNumber, pageSize, email, dateOfBirth, isVerified);
 
                 var response = new
                 {
@@ -45,6 +46,7 @@ namespace Backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
 
         [HttpGet("{email}")]
         public async Task<IActionResult> GetById([FromRoute] string email)

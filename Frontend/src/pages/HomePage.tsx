@@ -1,9 +1,9 @@
+import { SelectChangeEvent } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import '../css/HomePage.css';
-import placeholderImage from '../assets/profile-placeholder.jpg';
+import { CircularProgress, Typography, Box, Grid, Button, TextField, Card, CardContent, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { useGetAllUsersPageable } from '../hooks/UserHooks';
-import { CircularProgress, Typography, Box, Grid, Button, TextField, Card, CardContent } from '@mui/material';
-import { useState, useEffect } from 'react';
+import placeholderImage from '../assets/profile-placeholder.jpg';
+import '../css/HomePage.css'
 
 const HomePage = () => {
     const {
@@ -17,43 +17,25 @@ const HomePage = () => {
         email,
         setEmail,
         dateOfBirth,
-        setDateOfBirth
+        setDateOfBirth,
+        isVerified,
+        setIsVerified,
     } = useGetAllUsersPageable();
+
     const navigate = useNavigate();
     const totalPages = Math.ceil(totalRecords / pageSize);
 
-    const [debouncedEmail, setDebouncedEmail] = useState(email);
-    const [debouncedDateOfBirth, setDebouncedDateOfBirth] = useState(dateOfBirth);
-    const [typingTimeout, setTypingTimeout] = useState<number | null>(null);
-
-    useEffect(() => {
-        if (debouncedEmail !== email || debouncedDateOfBirth !== dateOfBirth) {
-            setPageNumber(1);
-        }
-    }, [debouncedEmail, debouncedDateOfBirth]);
-
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setEmail(value);
-
-        if (typingTimeout) clearTimeout(typingTimeout);
-        setTypingTimeout(
-            setTimeout(() => {
-                setDebouncedEmail(value);
-            }, 1500)
-        );
+        setEmail(event.target.value);
     };
 
     const handleDateOfBirthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setDateOfBirth(value);
+        setDateOfBirth(event.target.value);
+    };
 
-        if (typingTimeout) clearTimeout(typingTimeout);
-        setTypingTimeout(
-            setTimeout(() => {
-                setDebouncedDateOfBirth(value);
-            }, 1500) 
-        );
+    const handleIsVerifiedChange = (event: SelectChangeEvent<boolean | "all">) => {
+        const selectedValue = event.target.value;
+        setIsVerified(selectedValue === 'all' ? null : selectedValue === 'true');
     };
 
     if (loading) {
@@ -95,6 +77,18 @@ const HomePage = () => {
                         onChange={handleDateOfBirthChange}
                         style={{ width: '250px' }}
                     />
+                    <FormControl variant="outlined" style={{ width: '250px' }}>
+                        <InputLabel>Verification Status</InputLabel>
+                        <Select
+                            value={isVerified ?? 'all'}
+                            onChange={handleIsVerifiedChange}
+                            label="Verification Status"
+                        >
+                            <MenuItem value="true">Verified</MenuItem>
+                            <MenuItem value="false">Unverified</MenuItem>
+                            <MenuItem value="all">All</MenuItem>
+                        </Select>
+                    </FormControl>
                 </Box>
 
                 <Grid container spacing={4} style={{ padding: '16px' }}>
@@ -103,8 +97,9 @@ const HomePage = () => {
                             <Card className="user-card">
                                 <Box className="account-image-box">
                                     <img
+                                        className='card-image'
                                         onClick={() => handleUserClick(user.email)}
-                                        src={user.image ? URL.createObjectURL(user.image) : placeholderImage}
+                                        src={user.image ? `data:image/jpeg;base64,${user.image}` : placeholderImage}
                                     />
                                 </Box>
                                 <CardContent>
@@ -117,6 +112,9 @@ const HomePage = () => {
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         {new Date(user.dateOfBirth).toLocaleDateString()}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {`Is Verified: ${user.isVerified ? 'Yes' : 'No'}`}
                                     </Typography>
                                 </CardContent>
                             </Card>

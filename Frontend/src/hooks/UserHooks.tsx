@@ -12,13 +12,23 @@ const useGetAllUsersPageable = () => {
     const [pageNumber, setPageNumber] = useState(1);
     const [email, setEmail] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState('');
+    const [isVerified, setIsVerified] = useState<boolean | null>(null);
+    const [debouncedEmail, setDebouncedEmail] = useState(email);
     const pageSize = 6;
+
+    useEffect(() => {
+        const emailTimer = setTimeout(() => {
+            setDebouncedEmail(email);
+        }, 500);
+
+        return () => clearTimeout(emailTimer);
+    }, [email]);
 
     useEffect(() => {
         const getAllUsersPageableHandler = async () => {
             try {
                 setIsLoading(true);
-                const res = await getAllUsersPageable(pageNumber, pageSize, email, dateOfBirth);
+                const res = await getAllUsersPageable(pageNumber, pageSize, debouncedEmail, dateOfBirth, isVerified);
                 setUsers(res.users);
                 setTotalRecords(res.totalRecords);
             } catch (error: any) {
@@ -28,7 +38,7 @@ const useGetAllUsersPageable = () => {
             }
         };
         getAllUsersPageableHandler();
-    }, [pageNumber, email, dateOfBirth]);
+    }, [pageNumber, debouncedEmail, dateOfBirth, isVerified]);
 
     return {
         users,
@@ -42,6 +52,8 @@ const useGetAllUsersPageable = () => {
         setEmail,
         dateOfBirth,
         setDateOfBirth,
+        isVerified,
+        setIsVerified,
     };
 };
 
