@@ -146,15 +146,18 @@ const LoginPage = () => {
                     <Typography variant="body1" align="center" marginY={2}>
                         OR
                     </Typography>
-                    <GoogleOAuthProvider clientId="158219373742-gfbebtft5b3513a3nue58atin351fidi.apps.googleusercontent.com">
-                        <GoogleLogin
-                            onSuccess={handleGoogleSuccess}
-                            onError={handleGoogleFailure}
-                            theme="outline"
-                            shape="circle"
-                            isLoading={googleLoading}
-                        />
-                    </GoogleOAuthProvider>
+                    {googleLoading ? (
+                        <CircularProgress size={24} />
+                    ) : (
+                        <GoogleOAuthProvider clientId="158219373742-gfbebtft5b3513a3nue58atin351fidi.apps.googleusercontent.com">
+                            <GoogleLogin
+                                onSuccess={handleGoogleSuccess}
+                                onError={handleGoogleFailure}
+                                theme="outline"
+                                shape="circle"
+                            />
+                        </GoogleOAuthProvider>
+                    )}
                 </div>
             </Box>
 

@@ -25,7 +25,7 @@ namespace Backend.Services.TwoFactorAuthenticationService
             {
                 UserEmail = email,
                 Code = code,
-                ExpirationTime = DateTime.UtcNow.AddMinutes(10)
+                ExpirationTime = DateTime.UtcNow.AddMinutes(5)
             };
 
             await _twoFactorAuthRepository.SaveAsync(twoFactorAuth, existingAuth);

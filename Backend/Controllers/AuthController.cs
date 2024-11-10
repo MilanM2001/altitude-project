@@ -194,6 +194,10 @@ namespace Backend.Controllers
             {
                 return Conflict(ex.Message);
             }
+            catch (TwoFactorExpiredException)
+            {
+                return StatusCode(498);
+            }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);

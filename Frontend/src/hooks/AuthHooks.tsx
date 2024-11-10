@@ -155,6 +155,7 @@ const useVerifyEmail = () => {
 const useVerifyTwoFactor = () => {
     const [loading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate()
     const { login: loginContext } = useAuth();
 
@@ -167,13 +168,18 @@ const useVerifyTwoFactor = () => {
             await loginContext(accessToken, refreshToken);
             navigate(AppRoute.MY_ACCOUNT);
         } catch (error: any) {
+            if (error.response.status === 409) {
+                setErrorMessage("Invalid Code")
+            } else if (error.response.status === 498) {
+                setErrorMessage("Two factor code expired. A new one has been sent to your email")
+            }
             setError(error)
         } finally {
             setIsLoading(false)
         }
     }
 
-    return { verifyTwoFactorHandler, loading, error }
+    return { verifyTwoFactorHandler, loading, error, errorMessage }
 }
 
 const useGetMe = () => {

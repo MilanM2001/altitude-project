@@ -65,8 +65,7 @@ namespace Backend.Services.AuthService
                 UserEmail = user.Email,
                 Code = verificationCode,
             };
-            //Verification is off for now so that I can create users with fake emails
-            //To turn the verification on, just set the IsVerified to false and uncomment the SendVerificationEmail below.
+            //To turn the verification off, just set the IsVerified to true and comment the SendVerificationEmail function below.
             //After the user is registered, a code and a link will be send to his email. Enter the code in the input field after accessing the link
 
             await _userRepository.AddUserAsync(user);

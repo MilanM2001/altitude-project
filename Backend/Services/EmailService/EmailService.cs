@@ -6,6 +6,7 @@ using Backend.Repositories.EmailVerificationCodeRepository;
 using Backend.Repositories.TwoFactorAuthenticationRepository;
 using Backend.Repositories.UserRepository;
 using Backend.Services.AuthService;
+using Backend.Services.TwoFactorAuthenticationService;
 using Backend.Services.UserService;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -26,7 +27,8 @@ namespace Backend.Services.EmailService
         private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
 
         public EmailService(IUserRepository userRepository, IEmailVerificationRepository emailVerificationRepository,
-            ITwoFactorAuthenticationRepository twoFactorAuthenticationRepository, SmtpClient smtpClient, IConfiguration configuration, JwtSecurityTokenHandler tokenHandler)
+            ITwoFactorAuthenticationRepository twoFactorAuthenticationRepository,
+            SmtpClient smtpClient, IConfiguration configuration, JwtSecurityTokenHandler tokenHandler)
         {
             _userRepository = userRepository;
             _emailVerificationRepository = emailVerificationRepository;
@@ -88,9 +90,23 @@ namespace Backend.Services.EmailService
             var twoFactorAuthentication = await _twoFactorAuthenticationRepository.GetByUserEmailAsync(verifyTwoFactorDto.Email);
             if (twoFactorAuthentication == null)
                 throw new EntityNotFoundException("Two Factor not found");
-
-            if (twoFactorAuthentication.Code != verifyTwoFactorDto.Code)
+            else if (twoFactorAuthentication.Code != verifyTwoFactorDto.Code)
                 throw new InvalidCodeException("Invalid two factor code");
+            else if (twoFactorAuthentication.ExpirationTime < DateTime.UtcNow)
+            {
+                var existingAuth = await _twoFactorAuthenticationRepository.GetByUserEmailAsync(verifyTwoFactorDto.Email);
+                var code = Guid.NewGuid().ToString("N").Substring(0, 6);
+                var twoFactorAuth = new TwoFactorAuthentication
+                {
+                    UserEmail = verifyTwoFactorDto.Email,
+                    Code = code,
+                    ExpirationTime = DateTime.UtcNow.AddMinutes(5)
+                };
+
+                await _twoFactorAuthenticationRepository.SaveAsync(twoFactorAuth, existingAuth);
+                await SendTwoFactorCodeEmail(verifyTwoFactorDto.Email, code);
+                throw new TwoFactorExpiredException("Two Factor expired, new one sent");
+            }
 
             var authenticationResponseDto = new AuthenticationResponseDto
             {

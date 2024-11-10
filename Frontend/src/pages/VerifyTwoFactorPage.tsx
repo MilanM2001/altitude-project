@@ -6,7 +6,7 @@ import '../css/VerifyTwoFactorPage.css';
 
 const VerifyTwoFactorPage = () => {
     const { email } = useParams<{ email: string }>();
-    const { verifyTwoFactorHandler, loading, error } = useVerifyTwoFactor();
+    const { verifyTwoFactorHandler, loading, error, errorMessage } = useVerifyTwoFactor();
     const [code, setCode] = useState("");
 
     if (!email) {
@@ -40,9 +40,14 @@ const VerifyTwoFactorPage = () => {
                         {loading ? <CircularProgress size={24} className="loading-spinner" /> : "Verify"}
                     </Button>
                 </form>
-                {error && (
-                    <Typography className="error-message">
-                        {"Verification failed. Please try again."}
+                {errorMessage && (
+                    <Typography color="error" className="error-message">
+                        {errorMessage}
+                    </Typography>
+                )}
+                {error && !errorMessage && (
+                    <Typography color="error" className="error-message">
+                        Verification failed. Please try again.
                     </Typography>
                 )}
             </div>
